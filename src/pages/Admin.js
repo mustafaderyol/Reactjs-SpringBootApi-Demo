@@ -4,12 +4,13 @@ import {
     Container,
     Row,
     Card,
+    Button,
     CardBody,
     CardText,
     CardHeader,
     ListGroup, ListGroupItem, Alert
 } from "reactstrap";
-import {LOCAL_AUTH_URL, ACCESS_TOKEN, ADMIN_URL} from '../constants';
+import {API_BASE_URL, ACCESS_TOKEN, ADMIN_URL} from '../constants';
 import axios from "axios";
 import JSONPretty from 'react-json-pretty';
 
@@ -25,13 +26,32 @@ class Admin extends PureComponent {
         this.onClickListMethod = this.onClickListMethod.bind(this);
         this.onClickAddMethod = this.onClickAddMethod.bind(this);
         this.onClickDeleteMethod = this.onClickDeleteMethod.bind(this);
+        this.onClickLogin = this.onClickLogin.bind(this);
+    }
+
+    onClickLogin() {
+        axios.post(API_BASE_URL + "/auth/login", {email: "mustafa.deryol@hotmail.com", password: "123"}, {
+                headers: this.getHeader()
+            }
+        ).then((response) => {
+            localStorage.setItem(ACCESS_TOKEN, response.data.accessToken);
+            this.setState({
+                responseJson: response.data,
+                responseStatus: response.status
+            })
+        }).catch(error => {
+            this.setState({
+                responseJson: error.response.data,
+                responseStatus: error.response.status
+            });
+        });
     }
 
     getHeader = function () {
         return {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            'x-auth-type': 'EndUser',
+            'x-auth-type': 'Admin',
             'Authorization': 'bearer ' + (localStorage.getItem(ACCESS_TOKEN) ? localStorage.getItem(ACCESS_TOKEN) : "")
         }
     };
@@ -112,8 +132,8 @@ class Admin extends PureComponent {
                 <Container>
                     <Row>
                         <Col>
-                            <a color="primary" className="btn btn-primary" href={LOCAL_AUTH_URL}>OAuth2 ile
-                                Bağlan</a>
+                            <Button color="primary" onClick={this.onClickLogin}>OAuth2 ile
+                                Bağlan</Button>
                         </Col>
                     </Row>
                     <br/>

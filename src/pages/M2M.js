@@ -29,7 +29,6 @@ class M2M extends PureComponent {
         this.onClickDeleteMethod = this.onClickDeleteMethod.bind(this);
     }
 
-
     getHeader = function () {
         return {
             'Content-Type': 'application/json',
