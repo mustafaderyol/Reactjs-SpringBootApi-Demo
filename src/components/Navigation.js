@@ -6,22 +6,32 @@ import {
     NavItem,
     NavLink
 } from 'reactstrap';
+import {ACCESS_TOKEN} from "../constants";
 
 class Navigation extends PureComponent {
+    constructor(props) {
+        super(props);
+        this.navi = this.navi.bind(this);
+    }
+
+    navi(){
+        localStorage.setItem(ACCESS_TOKEN, "");
+    }
+
     render() {
         return (
             <div>
                 <Navbar color="dark" dark expand="md">
-                    <NavbarBrand href="/">Azerion Demo</NavbarBrand>
+                    <NavbarBrand href="/" onClick={this.navi}>Azerion Demo</NavbarBrand>
                     <Nav navbar>
                         <NavItem>
-                            <NavLink href="/">EndUser</NavLink>
+                            <NavLink href="/" onClick={this.navi}>EndUser</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink href="/admin">Admin</NavLink>
+                            <NavLink href="/admin" onClick={this.navi}>Admin</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink href="/m2m">M2M</NavLink>
+                            <NavLink href="/m2m" onClick={this.navi}>M2M</NavLink>
                         </NavItem>
                     </Nav>
                 </Navbar>

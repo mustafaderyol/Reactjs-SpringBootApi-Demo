@@ -1,26 +1,119 @@
 import React, {PureComponent} from 'react';
 import {
-    Alert,
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    CardText,
     Col,
     Container,
-    ListGroup,
-    ListGroupItem,
-    Row
+    Row,
+    Card,
+    CardBody,
+    CardText,
+    CardHeader,
+    ListGroup, ListGroupItem, Alert
 } from "reactstrap";
+import {LOCAL_AUTH_URL, ACCESS_TOKEN, ADMIN_URL} from '../constants';
+import axios from "axios";
+import JSONPretty from 'react-json-pretty';
 
 class Admin extends PureComponent {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            responseJson: "",
+            responseStatus: true
+        };
+        this.onClickGetMethod = this.onClickGetMethod.bind(this);
+        this.onClickListMethod = this.onClickListMethod.bind(this);
+        this.onClickAddMethod = this.onClickAddMethod.bind(this);
+        this.onClickDeleteMethod = this.onClickDeleteMethod.bind(this);
+    }
+
+    getHeader = function () {
+        return {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'x-auth-type': 'EndUser',
+            'Authorization': 'bearer ' + (localStorage.getItem(ACCESS_TOKEN) ? localStorage.getItem(ACCESS_TOKEN) : "")
+        }
+    };
+
+    onClickGetMethod() {
+        axios.get(ADMIN_URL + "101", {
+                headers: this.getHeader()
+            }
+        ).then((response) => {
+            this.setState({
+                responseJson: response.data,
+                responseStatus: response.status
+            });
+        }).catch(error => {
+            this.setState({
+                responseJson: error.response.data,
+                responseStatus: error.response.status
+            });
+        });
+    }
+
+    onClickListMethod() {
+        axios.get(ADMIN_URL, {
+                headers: this.getHeader()
+            }
+        ).then((response) => {
+            console.log(response);
+            this.setState({
+                responseJson: response.data,
+                responseStatus: response.status
+            });
+        }).catch(error => {
+            this.setState({
+                responseJson: error.response.data,
+                responseStatus: error.response.status
+            });
+        });
+    }
+
+    onClickAddMethod() {
+        axios.post(ADMIN_URL, "Yapılacak yeni", {
+                headers: this.getHeader()
+            }
+        ).then((response) => {
+            console.log(response);
+            this.setState({
+                responseJson: response.data,
+                responseStatus: response.status
+            });
+        }).catch(error => {
+            this.setState({
+                responseJson: error.response.data,
+                responseStatus: error.response.status
+            });
+        });
+    }
+
+    onClickDeleteMethod() {
+        axios.get(ADMIN_URL + "delete/101", {
+                headers: this.getHeader()
+            }
+        ).then((response) => {
+            this.setState({
+                responseJson: response.data,
+                responseStatus: response.status
+            });
+        }).catch(error => {
+            this.setState({
+                responseJson: error.response.data,
+                responseStatus: error.response.status
+            });
+        });
+    }
+
     render() {
         return (
             <div>
                 <Container>
                     <Row>
                         <Col>
-                            <Button color="primary">Auth0 ile Bağlan</Button>
+                            <a color="primary" className="btn btn-primary" href={LOCAL_AUTH_URL}>OAuth2 ile
+                                Bağlan</a>
                         </Col>
                     </Row>
                     <br/>
@@ -29,7 +122,7 @@ class Admin extends PureComponent {
                             <Card className="bg-dark text-white">
                                 <CardHeader className="text-warning">JWT</CardHeader>
                                 <CardBody>
-                                    <CardText>TOKEN</CardText>
+                                    <CardText>{localStorage.getItem(ACCESS_TOKEN)}</CardText>
                                 </CardBody>
                             </Card>
                         </Col>
@@ -42,22 +135,27 @@ class Admin extends PureComponent {
                                 <CardBody>
                                     <CardText>
                                         <ListGroup>
-                                            <ListGroupItem tag="button" action>GET</ListGroupItem>
-                                            <ListGroupItem tag="button" action>LIST</ListGroupItem>
-                                            <ListGroupItem tag="button" action>ADD</ListGroupItem>
-                                            <ListGroupItem tag="button" action>DELETE</ListGroupItem>
+                                            <ListGroupItem tag="button" action
+                                                           onClick={this.onClickGetMethod}>GET</ListGroupItem>
+                                            <ListGroupItem tag="button" action
+                                                           onClick={this.onClickListMethod}>LIST</ListGroupItem>
+                                            <ListGroupItem tag="button" action
+                                                           onClick={this.onClickAddMethod}>ADD</ListGroupItem>
+                                            <ListGroupItem tag="button" action
+                                                           onClick={this.onClickDeleteMethod}>DELETE</ListGroupItem>
                                         </ListGroup>
                                     </CardText>
                                 </CardBody>
                             </Card>
                         </Col>
                         <Col xs="10">
-                            <Alert color="success">
-                                This is a success alert — check it out!
-                            </Alert>
-                            <Alert color="danger">
-                                This is a danger alert — check it out!
-                            </Alert>
+                            {this.state.responseJson !== "" ?
+                                <Alert color={this.state.responseStatus === 200 ? "success" : "danger"}>
+                                    <JSONPretty id="json-pretty" data={this.state.responseJson}></JSONPretty>
+                                </Alert>
+                                :
+                                ""
+                            }
                         </Col>
                     </Row>
                 </Container>

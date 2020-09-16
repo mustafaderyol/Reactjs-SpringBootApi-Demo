@@ -27,16 +27,20 @@ class EndUser extends PureComponent {
         this.onClickDeleteMethod = this.onClickDeleteMethod.bind(this);
     }
 
+    getHeader = function () {
+        return {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'x-auth-type': 'EndUser',
+            'Authorization': 'bearer ' + (localStorage.getItem(ACCESS_TOKEN) ? localStorage.getItem(ACCESS_TOKEN) : "")
+        }
+    };
+
     onClickGetMethod() {
         axios.get(ENDUSER_URL + "101", {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Authorization': 'bearer ' + localStorage.getItem(ACCESS_TOKEN)
-                }
+                headers: this.getHeader()
             }
         ).then((response) => {
-            console.log(response);
             this.setState({
                 responseJson: response.data,
                 responseStatus: response.status
@@ -51,11 +55,7 @@ class EndUser extends PureComponent {
 
     onClickListMethod() {
         axios.get(ENDUSER_URL, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Authorization': 'bearer ' + localStorage.getItem(ACCESS_TOKEN)
-                }
+                headers: this.getHeader()
             }
         ).then((response) => {
             console.log(response);
@@ -73,11 +73,7 @@ class EndUser extends PureComponent {
 
     onClickAddMethod() {
         axios.post(ENDUSER_URL, "Yapılacak yeni", {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Authorization': 'bearer ' + localStorage.getItem(ACCESS_TOKEN)
-                }
+                headers: this.getHeader()
             }
         ).then((response) => {
             console.log(response);
@@ -95,11 +91,7 @@ class EndUser extends PureComponent {
 
     onClickDeleteMethod() {
         axios.get(ENDUSER_URL + "delete/101", {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Authorization': 'bearer ' + localStorage.getItem(ACCESS_TOKEN)
-                }
+                headers: this.getHeader()
             }
         ).then((response) => {
             this.setState({
