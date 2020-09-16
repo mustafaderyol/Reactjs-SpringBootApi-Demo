@@ -10,28 +10,108 @@ import {
     ListGroup, ListGroupItem, Alert
 } from "reactstrap";
 import {FACEBOOK_AUTH_URL, ACCESS_TOKEN, ENDUSER_URL} from '../constants';
-import {getItem} from '../utils/APIUtil';
+import axios from "axios";
+import JSONPretty from 'react-json-pretty';
 
 class EndUser extends PureComponent {
 
     constructor(props) {
         super(props);
         this.state = {
-            responseJson  : "",
-            responseStatus : true
+            responseJson: "",
+            responseStatus: true
         };
         this.onClickGetMethod = this.onClickGetMethod.bind(this);
+        this.onClickListMethod = this.onClickListMethod.bind(this);
+        this.onClickAddMethod = this.onClickAddMethod.bind(this);
+        this.onClickDeleteMethod = this.onClickDeleteMethod.bind(this);
     }
 
     onClickGetMethod() {
-        let data = getItem(ENDUSER_URL,101);
-        data.then(result=>{
+        axios.get(ENDUSER_URL + "101", {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Authorization': 'bearer ' + localStorage.getItem(ACCESS_TOKEN)
+                }
+            }
+        ).then((response) => {
+            console.log(response);
             this.setState({
-                responseJson : result.data,
-                responseStatus : result.status
+                responseJson: response.data,
+                responseStatus: response.status
+            });
+        }).catch(error => {
+            this.setState({
+                responseJson: error.response.data,
+                responseStatus: error.response.status
             });
         });
-        console.log(data);
+    }
+
+    onClickListMethod() {
+        axios.get(ENDUSER_URL, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Authorization': 'bearer ' + localStorage.getItem(ACCESS_TOKEN)
+                }
+            }
+        ).then((response) => {
+            console.log(response);
+            this.setState({
+                responseJson: response.data,
+                responseStatus: response.status
+            });
+        }).catch(error => {
+            this.setState({
+                responseJson: error.response.data,
+                responseStatus: error.response.status
+            });
+        });
+    }
+
+    onClickAddMethod() {
+        axios.post(ENDUSER_URL, "Yapılacak yeni", {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Authorization': 'bearer ' + localStorage.getItem(ACCESS_TOKEN)
+                }
+            }
+        ).then((response) => {
+            console.log(response);
+            this.setState({
+                responseJson: response.data,
+                responseStatus: response.status
+            });
+        }).catch(error => {
+            this.setState({
+                responseJson: error.response.data,
+                responseStatus: error.response.status
+            });
+        });
+    }
+
+    onClickDeleteMethod() {
+        axios.get(ENDUSER_URL + "delete/101", {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Authorization': 'bearer ' + localStorage.getItem(ACCESS_TOKEN)
+                }
+            }
+        ).then((response) => {
+            this.setState({
+                responseJson: response.data,
+                responseStatus: response.status
+            });
+        }).catch(error => {
+            this.setState({
+                responseJson: error.response.data,
+                responseStatus: error.response.status
+            });
+        });
     }
 
     render() {
@@ -40,7 +120,8 @@ class EndUser extends PureComponent {
                 <Container>
                     <Row>
                         <Col>
-                            <a color="primary" href={FACEBOOK_AUTH_URL}>Facebook ile Bağlan</a>
+                            <a color="primary" className="btn btn-primary" href={FACEBOOK_AUTH_URL}>Facebook ile
+                                Bağlan</a>
                         </Col>
                     </Row>
                     <br/>
@@ -64,18 +145,25 @@ class EndUser extends PureComponent {
                                         <ListGroup>
                                             <ListGroupItem tag="button" action
                                                            onClick={this.onClickGetMethod}>GET</ListGroupItem>
-                                            <ListGroupItem tag="button" action>LIST</ListGroupItem>
-                                            <ListGroupItem tag="button" action>ADD</ListGroupItem>
-                                            <ListGroupItem tag="button" action>DELETE</ListGroupItem>
+                                            <ListGroupItem tag="button" action
+                                                           onClick={this.onClickListMethod}>LIST</ListGroupItem>
+                                            <ListGroupItem tag="button" action
+                                                           onClick={this.onClickAddMethod}>ADD</ListGroupItem>
+                                            <ListGroupItem tag="button" action
+                                                           onClick={this.onClickDeleteMethod}>DELETE</ListGroupItem>
                                         </ListGroup>
                                     </CardText>
                                 </CardBody>
                             </Card>
                         </Col>
                         <Col xs="10">
-                            <Alert color={this.state.responseStatus == "200" ? "success":"danger"} >
-                                {JSON.stringify(this.state.responseJson, null, 2) }
-                            </Alert>
+                            {this.state.responseJson !== "" ?
+                                <Alert color={this.state.responseStatus === 200 ? "success" : "danger"}>
+                                    <JSONPretty id="json-pretty" data={this.state.responseJson}></JSONPretty>
+                                </Alert>
+                                :
+                                ""
+                            }
                         </Col>
                     </Row>
                 </Container>
