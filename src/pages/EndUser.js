@@ -3,22 +3,35 @@ import {
     Col,
     Container,
     Row,
-    Button,
     Card,
     CardBody,
     CardText,
     CardHeader,
     ListGroup, ListGroupItem, Alert
 } from "reactstrap";
+import {FACEBOOK_AUTH_URL, ACCESS_TOKEN, ENDUSER_URL} from '../constants';
+import {getItem} from '../utils/APIUtil';
 
 class EndUser extends PureComponent {
+
+    constructor(props) {
+        super(props);
+        this.onClickGetMethod = this.onClickGetMethod.bind(this);
+    }
+
+    onClickGetMethod() {
+        let data = getItem(ENDUSER_URL,101);
+        console.log("DATA: "+data);
+        console.log(data);
+    }
+
     render() {
         return (
             <div>
                 <Container>
                     <Row>
                         <Col>
-                            <Button color="primary">Facebook ile Bağlan</Button>
+                            <a color="primary" href={FACEBOOK_AUTH_URL}>Facebook ile Bağlan</a>
                         </Col>
                     </Row>
                     <br/>
@@ -27,7 +40,7 @@ class EndUser extends PureComponent {
                             <Card className="bg-dark text-white">
                                 <CardHeader className="text-warning">JWT</CardHeader>
                                 <CardBody>
-                                    <CardText>TOKEN</CardText>
+                                    <CardText>{localStorage.getItem(ACCESS_TOKEN)}</CardText>
                                 </CardBody>
                             </Card>
                         </Col>
@@ -40,7 +53,8 @@ class EndUser extends PureComponent {
                                 <CardBody>
                                     <CardText>
                                         <ListGroup>
-                                            <ListGroupItem tag="button" action>GET</ListGroupItem>
+                                            <ListGroupItem tag="button" action
+                                                           onClick={this.onClickGetMethod}>GET</ListGroupItem>
                                             <ListGroupItem tag="button" action>LIST</ListGroupItem>
                                             <ListGroupItem tag="button" action>ADD</ListGroupItem>
                                             <ListGroupItem tag="button" action>DELETE</ListGroupItem>
