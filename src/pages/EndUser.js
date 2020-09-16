@@ -16,12 +16,21 @@ class EndUser extends PureComponent {
 
     constructor(props) {
         super(props);
+        this.state = {
+            responseJson  : "",
+            responseStatus : true
+        };
         this.onClickGetMethod = this.onClickGetMethod.bind(this);
     }
 
     onClickGetMethod() {
         let data = getItem(ENDUSER_URL,101);
-        console.log("DATA: "+data);
+        data.then(result=>{
+            this.setState({
+                responseJson : result.data,
+                responseStatus : result.status
+            });
+        });
         console.log(data);
     }
 
@@ -64,11 +73,8 @@ class EndUser extends PureComponent {
                             </Card>
                         </Col>
                         <Col xs="10">
-                            <Alert color="success">
-                                This is a success alert — check it out!
-                            </Alert>
-                            <Alert color="danger">
-                                This is a danger alert — check it out!
+                            <Alert color={this.state.responseStatus == "200" ? "success":"danger"} >
+                                {JSON.stringify(this.state.responseJson, null, 2) }
                             </Alert>
                         </Col>
                     </Row>

@@ -19,9 +19,7 @@ const request = (options) => {
         headers
     };
 
-    let res = axios(config);
-
-    console.log(res);
+    return axios(config);
 };
 
 
