@@ -21,22 +21,45 @@ class M2M extends PureComponent {
         super(props);
         this.state = {
             responseJson: "",
-            responseStatus: true
+            responseStatus: true,
+            clientId: "client1",
+            clientSecret: "client1Secret",
+            sendHeader: false
         };
         this.onClickGetMethod = this.onClickGetMethod.bind(this);
         this.onClickListMethod = this.onClickListMethod.bind(this);
         this.onClickAddMethod = this.onClickAddMethod.bind(this);
         this.onClickDeleteMethod = this.onClickDeleteMethod.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
     }
 
     getHeader = function () {
-        return {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'x-auth-type': 'EndUser',
-            'Authorization': 'bearer ' + (localStorage.getItem(ACCESS_TOKEN) ? localStorage.getItem(ACCESS_TOKEN) : "")
+        if (this.state.sendHeader) {
+            return {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'x-auth-type': 'M2M',
+                'clientId': this.state.clientId,
+                'clientSecret': this.state.clientSecret
+            }
+        } else {
+            return {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'x-auth-type': 'M2M'
+            }
         }
     };
+
+    handleInputChange(event) {
+        const target = event.target;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        const name = target.name;
+
+        this.setState({
+            [name]: value
+        });
+    }
 
     onClickGetMethod() {
         axios.get(M2M_URL + "101", {
@@ -56,7 +79,7 @@ class M2M extends PureComponent {
     }
 
     onClickListMethod() {
-        axios.get(M2M_URL, {
+        axios.post(M2M_URL, {clientId: this.state.clientId, clientSecret: this.state.clientSecret}, {
                 headers: this.getHeader()
             }
         ).then((response) => {
@@ -74,7 +97,11 @@ class M2M extends PureComponent {
     }
 
     onClickAddMethod() {
-        axios.post(M2M_URL, "Yapılacak yeni", {
+        axios.post(M2M_URL + "create", {
+                clientId: this.state.clientId,
+                clientSecret: this.state.clientSecret,
+                name: "Yapılacak yeni"
+            }, {
                 headers: this.getHeader()
             }
         ).then((response) => {
@@ -92,7 +119,10 @@ class M2M extends PureComponent {
     }
 
     onClickDeleteMethod() {
-        axios.get(M2M_URL + "delete/101", {
+        axios.post(M2M_URL + "delete/101", {
+                clientId: this.state.clientId,
+                clientSecret: this.state.clientSecret
+            }, {
                 headers: this.getHeader()
             }
         ).then((response) => {
@@ -119,21 +149,24 @@ class M2M extends PureComponent {
                                     <FormGroup row>
                                         <Label for="clientId" sm={2}>Client Id</Label>
                                         <Col sm={10}>
-                                            <Input type="text" name="clientId" id="clientId" placeholder="Client Id" />
+                                            <Input type="text" name="clientId" value={this.state.clientId} id="clientId"
+                                                   placeholder="Client Id" onChange={this.handleInputChange}/>
                                         </Col>
                                     </FormGroup>
                                     <FormGroup row>
                                         <Label for="clientSecret" sm={2}>Client Secret</Label>
                                         <Col sm={10}>
-                                            <Input type="text" name="clientSecret" id="clientSecret" placeholder="Client Secret" />
+                                            <Input type="text" name="clientSecret" value={this.state.clientSecret}
+                                                   id="clientSecret" placeholder="Client Secret" onChange={this.handleInputChange}/>
                                         </Col>
                                     </FormGroup>
                                     <FormGroup row>
                                         <Label for="checkbox2" sm={2}> </Label>
-                                        <Col sm={{ size: 10 }}>
+                                        <Col sm={{size: 10}}>
                                             <FormGroup check>
                                                 <Label check>
-                                                    <Input type="checkbox" id="checkbox2" />{' '}
+                                                    <Input type="checkbox" value={this.state.sendHeader} id="sendHeader"
+                                                           name="sendHeader" onChange={this.handleInputChange}/>{' '}
                                                     Header'da gönder
                                                 </Label>
                                             </FormGroup>
@@ -143,18 +176,6 @@ class M2M extends PureComponent {
                             </CardText>
                         </CardBody>
                     </Card>
-
-                    <br/>
-                    <Row>
-                        <Col>
-                            <Card className="bg-dark text-white">
-                                <CardHeader className="text-warning">JWT</CardHeader>
-                                <CardBody>
-                                    <CardText>{localStorage.getItem(ACCESS_TOKEN)}</CardText>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                    </Row>
                     <br/>
                     <Row>
                         <Col xs="2">

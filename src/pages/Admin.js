@@ -28,6 +28,14 @@ class Admin extends PureComponent {
         this.onClickDeleteMethod = this.onClickDeleteMethod.bind(this);
         this.onClickLogin = this.onClickLogin.bind(this);
     }
+    getHeader = function () {
+        return {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'x-auth-type': 'Admin',
+            'Authorization': 'bearer ' + (localStorage.getItem(ACCESS_TOKEN) ? localStorage.getItem(ACCESS_TOKEN) : "")
+        }
+    };
 
     onClickLogin() {
         axios.post(API_BASE_URL + "/auth/login", {email: "mustafa.deryol@hotmail.com", password: "123"}, {
@@ -46,15 +54,6 @@ class Admin extends PureComponent {
             });
         });
     }
-
-    getHeader = function () {
-        return {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'x-auth-type': 'Admin',
-            'Authorization': 'bearer ' + (localStorage.getItem(ACCESS_TOKEN) ? localStorage.getItem(ACCESS_TOKEN) : "")
-        }
-    };
 
     onClickGetMethod() {
         axios.get(ADMIN_URL + "101", {
