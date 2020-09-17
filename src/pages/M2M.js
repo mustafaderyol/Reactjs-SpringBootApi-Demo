@@ -39,8 +39,8 @@ class M2M extends PureComponent {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
                 'x-auth-type': 'M2M',
-                'clientId': this.state.clientId,
-                'clientSecret': this.state.clientSecret
+                'x-client-id': this.state.clientId,
+                'x-client-secret': this.state.clientSecret
             }
         } else {
             return {
@@ -79,7 +79,7 @@ class M2M extends PureComponent {
     }
 
     onClickListMethod() {
-        axios.post(M2M_URL, {clientId: this.state.clientId, clientSecret: this.state.clientSecret}, {
+        axios.get(M2M_URL + "?clientId=" + this.state.clientId + "&clientSecret=" + this.state.clientSecret, {
                 headers: this.getHeader()
             }
         ).then((response) => {
@@ -97,11 +97,7 @@ class M2M extends PureComponent {
     }
 
     onClickAddMethod() {
-        axios.post(M2M_URL + "create", {
-                clientId: this.state.clientId,
-                clientSecret: this.state.clientSecret,
-                name: "Yapılacak yeni"
-            }, {
+        axios.post(M2M_URL + "?clientId=" + this.state.clientId + "&clientSecret=" + this.state.clientSecret, "Yapılacak yeni", {
                 headers: this.getHeader()
             }
         ).then((response) => {
@@ -119,10 +115,7 @@ class M2M extends PureComponent {
     }
 
     onClickDeleteMethod() {
-        axios.post(M2M_URL + "delete/101", {
-                clientId: this.state.clientId,
-                clientSecret: this.state.clientSecret
-            }, {
+        axios.get(M2M_URL + "delete/101" + "?clientId=" + this.state.clientId + "&clientSecret=" + this.state.clientSecret, {
                 headers: this.getHeader()
             }
         ).then((response) => {
@@ -157,7 +150,8 @@ class M2M extends PureComponent {
                                         <Label for="clientSecret" sm={2}>Client Secret</Label>
                                         <Col sm={10}>
                                             <Input type="text" name="clientSecret" value={this.state.clientSecret}
-                                                   id="clientSecret" placeholder="Client Secret" onChange={this.handleInputChange}/>
+                                                   id="clientSecret" placeholder="Client Secret"
+                                                   onChange={this.handleInputChange}/>
                                         </Col>
                                     </FormGroup>
                                     <FormGroup row>
